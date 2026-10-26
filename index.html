@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
   <script src="confetti.browser.min.js"></script>
+  <script src="lessons_data.js"></script>
   <script>
     if (typeof confetti === 'undefined') {
       const s = document.createElement('script');
@@ -522,7 +523,7 @@
 
     /* Drawing Paths animation */
     .stroke-previous {
-      stroke: #A0AAB8;
+      stroke: #8D99AE;
       stroke-width: 4.5;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -532,19 +533,39 @@
 
     .stroke-current {
       stroke: #2B2D42;
-      stroke-width: 6;
+      stroke-width: 5.5;
       stroke-linecap: round;
       stroke-linejoin: round;
       fill: none;
-      stroke-dasharray: 1200;
-      stroke-dashoffset: 1200;
-      animation: drawStroke 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      stroke-dasharray: 1400;
+      stroke-dashoffset: 1400;
+      animation: drawStroke 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .stroke-current.has-fill {
+      animation: drawStroke 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards, fillStroke 0.35s ease 1.5s forwards;
+    }
+
+    .stroke-fill-only {
+      animation: popFillIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.6s both;
+      transform-origin: center;
     }
 
     @keyframes drawStroke {
       to {
         stroke-dashoffset: 0;
       }
+    }
+
+    @keyframes fillStroke {
+      to {
+        fill: var(--target-fill, #2B2D42);
+      }
+    }
+
+    @keyframes popFillIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .replay-badge-btn {
@@ -1132,6 +1153,255 @@
       100% { transform: scale(1); }
     }
 
+    /* Speech Button */
+    .btn-speech {
+      background: linear-gradient(135deg, #FFE066, #FFB703);
+      border: 2px solid #FFF;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255, 183, 3, 0.35);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      vertical-align: middle;
+      font-family: inherit;
+    }
+    .btn-speech:active, .btn-speech.speaking {
+      transform: scale(1.15);
+      animation: pulseSpeech 0.6s infinite alternate;
+    }
+    @keyframes pulseSpeech {
+      from { box-shadow: 0 0 0 0 rgba(255, 183, 3, 0.8); }
+      to { box-shadow: 0 0 0 10px rgba(255, 183, 3, 0); }
+    }
+
+    /* Lavagna Magica (Canvas View) */
+    .canvas-app-card {
+      background: white;
+      border-radius: var(--radius-xl);
+      border: 3px solid #F0ECE4;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    .canvas-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .canvas-title-group h2 {
+      font-size: 1.45rem;
+      color: var(--primary);
+    }
+    .canvas-title-group p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .canvas-quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .canvas-action-btn {
+      background: #F4EFE6;
+      border: 2px solid #E5DFD3;
+      border-radius: 14px;
+      padding: 8px 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      color: var(--text-dark);
+    }
+    .canvas-action-btn:hover {
+      background: #EDE6D8;
+      transform: translateY(-2px);
+    }
+    .canvas-action-btn:active {
+      transform: scale(0.95);
+    }
+    .canvas-action-btn.save-btn {
+      background: linear-gradient(135deg, #06D6A0, #05B386);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 14px rgba(6, 214, 160, 0.35);
+    }
+
+    /* Tracing select bar */
+    .tracing-select-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #FFF9EB;
+      border: 2px dashed #FFD166;
+      border-radius: 16px;
+      padding: 10px 14px;
+    }
+
+    .tracing-label {
+      font-size: 0.92rem;
+      color: #7A5300;
+      white-space: nowrap;
+    }
+
+    .tracing-select-bar select {
+      flex: 1;
+      border-radius: 10px;
+      border: 1.5px solid #FFD166;
+      background: white;
+      padding: 6px 10px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .btn-toggle-trace-opacity {
+      background: white;
+      border: 1.5px solid #FFD166;
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .btn-toggle-trace-opacity:active {
+      transform: scale(0.92);
+    }
+
+    /* Canvas Board Wrapper */
+    .canvas-board-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-height: 440px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 3px solid #F0ECE4;
+      background: #FFFDF7;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.04);
+      touch-action: none;
+    }
+
+    .ghost-guide-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s ease;
+      z-index: 1;
+    }
+
+    .ghost-guide-overlay svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    #paintCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    /* Toolbar: Palette & Sizes */
+    .canvas-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .palette-swatches {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .color-swatch-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+    .color-swatch-btn:hover {
+      transform: scale(1.15);
+    }
+    .color-swatch-btn.active {
+      transform: scale(1.22);
+      box-shadow: 0 0 0 3px var(--primary), 0 5px 12px rgba(0,0,0,0.2);
+    }
+    .color-swatch-btn.rainbow {
+      background: linear-gradient(135deg, #FF5E7E, #FFD166, #06D6A0, #3A86FF, #9D4EDD);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .color-swatch-btn.eraser {
+      background: #F0ECE4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .brush-size-picker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .brush-size-btn {
+      border: 2px solid #E5DFD3;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #555;
+      transition: all 0.2s ease;
+    }
+    .brush-size-btn.size-sm { width: 32px; height: 32px; font-size: 0.6rem; }
+    .brush-size-btn.size-md { width: 38px; height: 38px; font-size: 1rem; }
+    .brush-size-btn.size-lg { width: 44px; height: 44px; font-size: 1.4rem; }
+    .brush-size-btn.active {
+      background: #FFE8EE;
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
     @media (max-width: 600px) {
       .hero-banner {
         padding: 20px 16px;
@@ -1148,6 +1418,10 @@
       .btn-nav {
         padding: 14px 16px;
         font-size: 1.1rem;
+      }
+      .nav-item {
+        padding: 6px 10px;
+        font-size: 0.8rem;
       }
     }
   </style>
@@ -1223,7 +1497,12 @@
 
         <!-- Istruzione parlante & Guida genitori -->
         <div class="instruction-box">
-          <div class="step-tag-pill" id="stepNumberTag">PASSAGGIO 1 DI 4</div>
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+            <div class="step-tag-pill" id="stepNumberTag" style="margin-bottom: 0;">PASSAGGIO 1 DI 4</div>
+            <button class="btn-speech" id="btnSpeakInstruction" onclick="speakCurrentInstruction()" title="Ascolta l'istruzione">
+              <span id="speechIcon">🔊</span>
+            </button>
+          </div>
           <div class="instruction-text" id="stepInstructionText">Disegna la sagoma principale...</div>
           
           <div class="parent-tip" id="parentTipBox">
@@ -1242,6 +1521,51 @@
           </button>
         </div>
 
+      </div>
+    </section>
+
+    <!-- VIEW 4: LAVAGNA MAGICA (DISEGNO LIBERO & RICALCO) -->
+    <section id="viewCanvas" class="view-section">
+      <div class="canvas-app-card">
+        <!-- Header Lavagna -->
+        <div class="canvas-header">
+          <div class="canvas-title-group">
+            <h2 id="lblCanvasTitle">🎨 Lavagna Magica</h2>
+            <p id="lblCanvasSubtitle">Disegna col dito o ricalca la sagoma guida!</p>
+          </div>
+          <div class="canvas-quick-actions">
+            <button class="canvas-action-btn" id="btnCanvasUndo" onclick="undoCanvas()" title="Annulla ultimo tratto">↩️</button>
+            <button class="canvas-action-btn" id="btnCanvasClear" onclick="clearCanvas()" title="Pulisci tutto">🗑️</button>
+            <button class="canvas-action-btn save-btn" id="btnCanvasSave" onclick="saveCanvasToGallery()" title="Salva nei miei Disegni">💾 <span id="lblCanvasSaveText">Salva</span></button>
+          </div>
+        </div>
+
+        <!-- Barra Selettore Sagoma Guida (Ghost Tracing) -->
+        <div class="tracing-select-bar">
+          <span class="tracing-label">👻 <strong id="lblTraceGuide">Sagoma Guida:</strong></span>
+          <select id="selectTraceGuide" onchange="changeTraceGuide(this.value)">
+            <option value="" id="optNoGuide">Nessuna guida (foglio bianco)</option>
+          </select>
+          <button class="btn-toggle-trace-opacity" id="btnToggleGhost" onclick="cycleGhostOpacity()" title="Regola trasparenza">👁️</button>
+        </div>
+
+        <!-- Area Foglio da Disegno con Canvas e SVG Guida Sotto -->
+        <div class="canvas-board-wrapper" id="canvasBoardWrapper">
+          <div class="ghost-guide-overlay" id="ghostGuideOverlay" style="opacity: 0.35; display: none;">
+            <svg id="ghostGuideSvg" viewBox="0 0 400 400"></svg>
+          </div>
+          <canvas id="paintCanvas" width="800" height="800"></canvas>
+        </div>
+
+        <!-- Strumenti: Palette Colori & Pennello -->
+        <div class="canvas-toolbar">
+          <div class="palette-swatches" id="paletteSwatches"></div>
+          <div class="brush-size-picker">
+            <button class="brush-size-btn size-sm" onclick="setBrushSize(4)" title="Fine">●</button>
+            <button class="brush-size-btn size-md active" onclick="setBrushSize(8)" title="Medio">●</button>
+            <button class="brush-size-btn size-lg" onclick="setBrushSize(16)" title="Grosso">●</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1265,6 +1589,11 @@
       <div class="trophy-emoji">🌟🎉🎨</div>
       <h3 id="congratsHeading">Super Bravissimo!</h3>
       <p id="congratsMessage">Hai completato il disegno con successo! Sei un vero artista!</p>
+
+      <!-- Anteprima Capolavoro Completato -->
+      <div id="modalArtworkPreviewWrap" style="width: 140px; height: 140px; margin: 0 auto 16px auto; border-radius: 20px; box-shadow: 0 8px 24px rgba(255, 94, 126, 0.2); border: 3px solid #FFD166; overflow: hidden; background: #FFF; display: flex; align-items: center; justify-content: center;">
+        <svg id="modalArtworkSvg" viewBox="0 0 400 400" style="width: 120px; height: 120px;"></svg>
+      </div>
 
       <!-- Scatto Foto al Disegno Reale -->
       <div class="photo-capture-section">
@@ -1348,6 +1677,10 @@
       <div class="nav-icon">✏️</div>
       <span id="navLblLearn">Impara</span>
     </button>
+    <button class="nav-item" id="navCanvas" onclick="switchView('canvas')">
+      <div class="nav-icon">🎨</div>
+      <span id="navLblCanvas">Lavagna</span>
+    </button>
     <button class="nav-item" id="navGallery" onclick="switchView('gallery')">
       <div class="nav-icon">🖼️</div>
       <span id="navLblGallery">I miei Disegni</span>
@@ -1413,7 +1746,15 @@
         confirmCancel: "Annulla",
         confirmDelete: "Elimina",
         deletedToast: "Disegno eliminato",
-        storageFull: "La memoria è piena: la foto non è stata salvata. Prova a eliminare qualche disegno."
+        storageFull: "La memoria è piena: la foto non è stata salvata. Prova a eliminare qualche disegno.",
+        navCanvas: "Lavagna",
+        lblCanvasTitle: "🎨 Lavagna Magica",
+        lblCanvasSubtitle: "Disegna col dito o ricalca la sagoma guida!",
+        lblCanvasSaveText: "Salva",
+        lblTraceGuide: "Sagoma Guida:",
+        optNoGuide: "Nessuna guida (foglio bianco)",
+        btnSpeakTitle: "Ascolta l'istruzione",
+        drawingSaved: "Disegno salvato nei tuoi capolavori! 🌟"
       },
       en: {
         heroTitle: "Hello, Little Artist! 🎨",
@@ -1468,505 +1809,40 @@
         confirmCancel: "Cancel",
         confirmDelete: "Delete",
         deletedToast: "Drawing deleted",
-        storageFull: "Storage is full: the photo was not saved. Try deleting some drawings."
+        storageFull: "Storage is full: the photo was not saved. Try deleting some drawings.",
+        navCanvas: "Whiteboard",
+        lblCanvasTitle: "🎨 Magic Whiteboard",
+        lblCanvasSubtitle: "Draw with your finger or trace the ghost guide!",
+        lblCanvasSaveText: "Save",
+        lblTraceGuide: "Trace Guide:",
+        optNoGuide: "No guide (blank canvas)",
+        btnSpeakTitle: "Listen to instruction",
+        drawingSaved: "Drawing saved to your artworks! 🌟"
       }
     };
 
-    /* =============================================================
-       MATITA MAGICA - DATASET COMPLETO DELLE 14 LEZIONI PERFEZIONATE
-       Categorie: Animali (6), Mezzi (4), Natura & Oggetti (4)
-       Soggetti:
-       1.  cat_01:     🐱 Gattino Dolce (Animali)
-       2.  dog_02:     🐶 Cagnolino Allegro (Animali)
-       3.  bunny_03:   🐰 Coniglietto Birichino (Animali)
-       4.  fish_04:    🐠 Pesciolino Tropicale (Animali)
-       5.  butterfly_05: 🦋 Farfalla Magica (Animali)
-       6.  penguin_06: 🐧 Pinguino Birichino (Animali)
-       7.  car_07:     🚗 Macchinina Sprint (Mezzi)
-       8.  plane_08:   ✈️ Aereo nei Cieli (Mezzi)
-       9.  rocket_09:  🚀 Razzo Spaziale (Mezzi)
-       10. boat_10:    ⛵ Barchetta a Vela (Mezzi)
-       11. star_11:    ⭐ Stella Sorridente (Natura & Oggetti)
-       12. icecream_12: 🍦 Gelato Goloso (Natura & Oggetti)
-       13. house_13:   🏠 Casetta nel Bosco (Natura & Oggetti)
-       14. mushroom_14: 🍄 Funghetto Magico (Natura & Oggetti)
-       ============================================================= */
-    
-    const lessonsData = [
-      // -------------------------------------------------------------
-      // CATEGORIA 1: 🐾 Animali (6 soggetti)
-      // -------------------------------------------------------------
-      {
-        id: "cat_01",
-        title: { it: "Gattino Dolce", en: "Sweet Kitten" },
-        category: "Animali",
-        difficulty: "Facile",
-        iconEmoji: "🐱",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna un bell'ovale orizzontale al centro del foglio per la testa del gattino!", en: "Draw a nice horizontal oval in the middle of the page for the kitten's head!" },
-            tips: { it: "Muovi il polso leggero e rotondo per fare guancette morbide.", en: "Keep your wrist light and loose to make soft, cute cheeks." },
-            svgD: "M 120,180 C 100,195 100,230 130,245 C 160,255 240,255 270,245 C 300,230 300,195 280,180 C 260,160 140,160 120,180 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Sopra la testa aggiungi due orecchie a punta con i triangolini interni!", en: "Add two pointed ears on top of the head with inner triangles!" },
-            tips: { it: "I triangoli interni fanno sembrare le orecchie vere e attente.", en: "Inner triangles give the ears depth and life." },
-            svgD: "M 135,170 L 115,100 L 175,155 M 225,155 L 285,100 L 265,170 M 135,155 L 125,115 L 165,148 M 235,148 L 275,115 L 265,155"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Fai due cerchietti per gli occhi, il nasino a triangolo, la boccuccia e i baffetti!", en: "Make circle eyes, a triangle nose, a cute smile, and whiskers!" },
-            tips: { it: "La bocca ha la forma di una dolce 'w' collegata al nasino.", en: "The mouth looks like a soft 'w' connected to the nose." },
-            svgD: "M 160,195 A 8,8 0 1,0 160,195.1 M 240,195 A 8,8 0 1,0 240,195.1 M 195,212 L 205,212 L 200,218 Z M 200,218 L 200,222 Q 190,230 182,222 M 200,222 Q 210,230 218,222 M 115,208 L 75,202 M 115,216 L 70,218 M 115,224 L 75,234 M 285,208 L 325,202 M 285,216 L 330,218 M 285,224 L 325,234"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Disegna il corpo seduto, due zampette con le dita e la coda felice che si arriccia!", en: "Draw the sitting body, two front paws with toes, and a happy curling tail!" },
-            tips: { it: "Le zampette davanti poggiano sul pavimento.", en: "The front paws rest neatly on the floor." },
-            svgD: "M 145,248 C 135,285 125,320 125,345 L 275,345 C 275,320 265,285 255,248 M 170,345 L 170,310 C 170,300 190,300 190,310 L 190,345 M 210,345 L 210,310 C 210,300 230,300 230,310 L 230,345 M 177,345 L 177,338 M 183,345 L 183,338 M 217,345 L 217,338 M 223,345 L 223,338 M 265,335 C 315,345 340,300 325,260 C 315,235 290,240 295,260 C 300,275 315,280 305,310 C 295,330 275,325 260,325"
-          }
-        ]
-      },
-      {
-        id: "dog_02",
-        title: { it: "Cagnolino Allegro", en: "Happy Puppy" },
-        category: "Animali",
-        difficulty: "Facile",
-        iconEmoji: "🐶",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Traccia un cerchio rotondo e simpatico nella parte alta del foglio.", en: "Draw a friendly round circle in the upper half of your paper." },
-            tips: { it: "Tutti i cagnolini sono unici, non serve che sia perfetto!", en: "Every puppy is unique, it does not need to be a perfect circle!" },
-            svgD: "M 200,115 C 135,115 130,225 200,235 C 270,225 265,115 200,115 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Aggiungi due grandi orecchie a goccia che cadono morbide ai lati.", en: "Add two floppy teardrop ears hanging gently by the sides." },
-            tips: { it: "Come due pere morbide capovolte.", en: "Like two inverted soft pears." },
-            svgD: "M 145,150 C 95,165 85,245 115,265 C 135,265 145,215 142,180 M 255,150 C 305,165 315,245 285,265 C 265,265 255,215 258,180"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Fai gli occhietti lucidi, il tartufo a cuore e la bocca con la linguetta!", en: "Draw glossy eyes, a heart button nose, and smiling mouth with tongue!" },
-            tips: { it: "La linguetta che sbuca fa sembrare il cagnolino felicissimo.", en: "The peeking tongue makes the pup look thrilled." },
-            svgD: "M 170,165 A 7,7 0 1,1 170,165.1 M 230,165 A 7,7 0 1,1 230,165.1 M 172,163 A 2,2 0 1,1 172,163.1 M 232,163 A 2,2 0 1,1 232,163.1 M 190,195 Q 200,186 210,195 Q 200,210 190,195 Z M 200,208 L 200,218 Q 188,228 178,218 M 200,218 Q 212,228 222,218 M 194,222 C 194,236 206,236 206,222"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Disegna il corpo seduto, due zampette che toccano terra e la coda che scodinzola!", en: "Draw the sitting body, two front paws on the floor, and a wagging tail!" },
-            tips: { it: "Le zampette anteriori hanno le dita pronte a saltare.", en: "Front paws have cute toes ready to bounce." },
-            svgD: "M 150,228 C 140,270 120,315 120,345 L 280,345 C 280,315 260,270 250,228 M 170,345 L 170,275 C 170,265 190,265 190,275 L 190,345 M 210,345 L 210,275 C 210,265 230,265 230,275 L 230,345 M 177,345 L 177,338 M 183,345 L 183,338 M 217,345 L 217,338 M 223,345 L 223,338 M 270,320 C 310,320 330,285 320,265 C 310,250 295,265 295,280 C 295,300 275,310 265,312"
-          }
-        ]
-      },
-      {
-        id: "bunny_03",
-        title: { it: "Coniglietto Birichino", en: "Playful Bunny" },
-        category: "Animali",
-        difficulty: "Facile",
-        iconEmoji: "🐰",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna una forma ovale morbida, leggermente più stretta in cima.", en: "Draw a soft egg shape, slightly narrower at the top." },
-            tips: { it: "Come un uovo di Pasqua in piedi!", en: "Just like an upright Easter egg!" },
-            svgD: "M 200,145 C 145,145 135,245 200,245 C 265,245 255,145 200,145 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Traccia due grandi archi altissimi con l'interno morbido per le orecchie!", en: "Draw two tall long loops with inner soft arches for bunny ears!" },
-            tips: { it: "Più sono lunghe, più il coniglio sarà buffo e curioso.", en: "The longer the ears, the funnier the bunny will look." },
-            svgD: "M 175,155 C 150,60 165,40 185,40 C 200,40 198,105 192,150 M 208,150 C 202,105 200,40 215,40 C 235,40 250,60 225,155 M 178,135 C 165,75 172,60 185,60 C 193,60 192,105 188,135 M 212,135 C 208,105 207,60 215,60 C 228,60 235,75 222,135"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Due occhietti lucidi, nasino, dentoni da carota e simpatici baffetti!", en: "Add shiny eyes, a tiny nose, carrot-crunching teeth, and cute whiskers!" },
-            tips: { it: "I dentoni sono un quadratino diviso a metà al centro della bocca.", en: "Two front teeth split in the middle make the bunny super cute." },
-            svgD: "M 170,185 A 6,6 0 1,1 170,185.1 M 230,185 A 6,6 0 1,1 230,185.1 M 194,200 L 206,200 L 200,206 Z M 200,206 L 200,212 Q 192,218 184,212 M 200,212 Q 208,218 216,212 M 194,213 L 194,225 L 206,225 L 206,213 M 200,213 L 200,225 M 155,202 L 115,198 M 155,210 L 110,214 M 245,202 L 285,198 M 245,210 L 290,214"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Aggiungi il corpo seduto, le zampette anteriori e una codina soffice a pon-pon!", en: "Draw the sitting body, two front paws, and a fluffy pom-pom tail!" },
-            tips: { it: "Le zampette davanti aiutano il coniglietto a reggersi in piedi.", en: "Front paws help the bunny sit neatly upright." },
-            svgD: "M 150,240 C 135,280 120,320 120,345 L 280,345 C 280,320 265,280 250,240 M 170,345 L 170,295 C 170,285 190,285 190,295 L 190,345 M 210,345 L 210,295 C 210,285 230,285 230,295 L 230,345 M 265,330 C 285,320 295,335 285,345 C 275,355 260,345 265,330"
-          }
-        ]
-      },
-      {
-        id: "fish_04",
-        title: { it: "Pesciolino Tropicale", en: "Tropical Fish" },
-        category: "Animali",
-        difficulty: "Facile",
-        iconEmoji: "🐠",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna una bella forma affusolata a goccia orizzontale con la boccuccia a cuoricino!", en: "Draw a sleek horizontal teardrop shape with a cute little kiss mouth!" },
-            tips: { it: "La boccuccia a sinistra sembra mandare un dolce bacetto nell'acqua.", en: "The little mouth on the left looks like blowing a sweet underwater kiss." },
-            svgD: "M 100,200 C 100,120 260,120 290,200 C 260,280 100,280 100,200 Z M 95,195 Q 85,200 95,205"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Aggiungi la grande coda a ventaglio e le pinne morbide sopra e sotto!", en: "Add the big fan tail and soft fins on top and bottom!" },
-            tips: { it: "La coda si allarga sul retro per farlo nuotare velocissimo.", en: "The tail widens at the back to help it swim super fast." },
-            svgD: "M 290,200 L 345,150 C 330,185 330,215 345,250 Z M 180,135 C 200,95 240,110 250,140 M 190,265 C 205,300 235,295 240,265"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna il grande occhio lucido, le strisce colorate sul corpo e sulla coda!", en: "Draw the big shiny eye, and cheerful stripes on the body and tail!" },
-            tips: { it: "Due curve verticali creano le classiche strisce da pesciolino pagliaccio.", en: "Two vertical curves make classic clownfish stripes." },
-            svgD: "M 140,180 A 12,12 0 1,1 140,180.1 M 143,177 A 4,4 0 1,1 143,177.1 M 175,145 C 190,175 190,225 175,255 M 225,145 C 235,175 235,225 225,255 M 295,175 L 325,170 M 295,225 L 325,230"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Fai la pinnetta laterale e tre simpatiche bollicine d'aria che salgono!", en: "Add the side flipper and three cute air bubbles floating up!" },
-            tips: { it: "Fai le bollicine di grandezze diverse, dalla più piccola alla più grande.", en: "Draw bubbles of different sizes floating upward." },
-            svgD: "M 160,205 C 175,195 190,205 185,220 C 175,230 160,215 160,205 Z M 75,160 A 7,7 0 1,1 75,160.1 M 60,125 A 10,10 0 1,1 60,125.1 M 75,90 A 6,6 0 1,1 75,90.1"
-          }
-        ]
-      },
-      {
-        id: "butterfly_05",
-        title: { it: "Farfalla Magica", en: "Magic Butterfly" },
-        category: "Animali",
-        difficulty: "Medio",
-        iconEmoji: "🦋",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Traccia la testolina tonda, il corpicino allungato e le due antenne arricciate!", en: "Draw the round head, slender body, and two curled antennae!" },
-            tips: { it: "Le punte delle antenne formano due piccoli ricciolini curiosi.", en: "The tips of the antennae make cute curious little swirls." },
-            svgD: "M 200,165 A 12,12 0 1,1 200,165.1 M 193,177 C 190,205 190,255 195,290 C 205,290 205,205 203,177 Z M 196,155 C 185,125 165,120 165,130 C 165,138 175,138 175,130 M 204,155 C 215,125 235,120 235,130 C 235,138 225,138 225,130"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Disegna le due grandi ali superiori che si aprono verso l'alto come cuori!", en: "Draw two large upper wings opening up like big hearts!" },
-            tips: { it: "Falle ampie e simmetriche a destra e a sinistra.", en: "Make them wide and symmetrical on both left and right." },
-            svgD: "M 203,185 C 240,110 335,100 340,175 C 345,225 270,240 203,225 M 197,185 C 160,110 65,100 60,175 C 55,225 130,240 197,225"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Aggiungi le due ali inferiori arrotondate e morbide verso il basso!", en: "Add the two lower rounded wings flowing gently downward!" },
-            tips: { it: "Le ali inferiori sono un pochino più piccole di quelle superiori.", en: "The lower wings are slightly smaller than the top ones." },
-            svgD: "M 203,230 C 260,240 295,295 260,335 C 230,360 205,300 203,270 M 197,230 C 140,240 105,295 140,335 C 170,360 195,300 197,270"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Decora le ali con cerchietti magici e pois colorati!", en: "Decorate the wings with magical circles and charming dots!" },
-            tips: { it: "In natura ogni farfalla ha disegni unici sulle ali.", en: "In nature, every butterfly has unique wing patterns." },
-            svgD: "M 275,165 A 14,14 0 1,1 275,165.1 M 125,165 A 14,14 0 1,1 125,165.1 M 245,295 A 9,9 0 1,1 245,295.1 M 155,295 A 9,9 0 1,1 155,295.1 M 310,140 A 5,5 0 1,1 310,140.1 M 90,140 A 5,5 0 1,1 90,140.1"
-          }
-        ]
-      },
-      {
-        id: "penguin_06",
-        title: { it: "Pinguino Birichino", en: "Cute Penguin" },
-        category: "Animali",
-        difficulty: "Facile",
-        iconEmoji: "🐧",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna una grande sagoma paffuta a forma di uovo in piedi!", en: "Draw a big chubby upright egg shape for the penguin's body!" },
-            tips: { it: "Il corpo del pinguino è morbido e arrotondato per proteggerlo dal freddo.", en: "The penguin's round chubby body keeps it warm in the snow." },
-            svgD: "M 200,90 C 130,90 120,290 140,325 C 160,340 240,340 260,325 C 280,290 270,90 200,90 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "All'interno disegna il grande pancino bianco ad arco e la mascherina del viso!", en: "Draw the large white tummy arch and facial mask contour!" },
-            tips: { it: "Crea una forma a cuore in cima che scende lungo il pancino.", en: "Create a soft heart dip at the top that flows down to the belly." },
-            svgD: "M 170,145 C 185,135 200,150 200,150 C 200,150 215,135 230,145 C 250,165 245,325 200,325 C 155,325 150,165 170,145 Z"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Fai due occhietti lucidi, il becco a triangolino e le due alette aperte!", en: "Add two glossy eyes, a triangle beak, and two flipper wings!" },
-            tips: { it: "Le alette sono aperte pronte a scivolare sul ghiaccio.", en: "Flippers are wide open ready to slide on the ice." },
-            svgD: "M 180,165 A 6,6 0 1,1 180,165.1 M 220,165 A 6,6 0 1,1 220,165.1 M 190,180 L 210,180 L 200,195 Z M 130,200 C 105,230 100,270 120,285 C 130,275 135,245 135,215 M 270,200 C 295,230 300,270 280,285 C 270,275 265,245 265,215"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Aggiungi le due zampette piatte arancioni e piccoli fiocchi di neve attorno!", en: "Add two cute webbed feet and falling snowflakes around!" },
-            tips: { it: "Le zampette poggiano sul ghiaccio con passo buffo.", en: "The feet rest flat on the ground ready to waddle." },
-            svgD: "M 155,328 C 145,345 150,355 175,350 L 175,328 M 245,328 C 255,345 250,355 225,350 L 225,328 M 80,110 L 95,110 M 87.5,102.5 L 87.5,117.5 M 310,130 L 325,130 M 317.5,122.5 L 317.5,137.5 M 70,230 A 3,3 0 1,1 70,230.1 M 330,240 A 3,3 0 1,1 330,240.1"
-          }
-        ]
-      },
-    
-      // -------------------------------------------------------------
-      // CATEGORIA 2: 🚗 Mezzi (4 soggetti)
-      // -------------------------------------------------------------
-      {
-        id: "car_07",
-        title: { it: "Macchinina Sprint", en: "Sprint Car" },
-        category: "Mezzi",
-        difficulty: "Facile",
-        iconEmoji: "🚗",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna il profilo della carrozzeria con il cofano, il tetto e il bagagliaio!", en: "Draw the car body outline with hood, roof cabin, and trunk!" },
-            tips: { it: "Lascia due spazi semicircolari sotto per posizionare le ruote.", en: "Leave two curved gaps at the bottom where wheels will sit." },
-            svgD: "M 65,270 L 105,270 C 105,240 165,240 165,270 L 235,270 C 235,240 295,240 295,270 L 335,270 L 335,240 L 290,235 L 255,175 L 145,175 L 110,235 L 65,245 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Inserisci le due grandi ruote rotonde con il cerchione interno!", en: "Fit two big round wheels with inner rims!" },
-            tips: { it: "Due doppi cerchi concentrici perfetti per sfrecciare.", en: "Double concentric circles make sturdy racing wheels." },
-            svgD: "M 110,270 A 25,25 0 1,0 160,270 A 25,25 0 1,0 110,270 Z M 125,270 A 10,10 0 1,0 145,270 A 10,10 0 1,0 125,270 Z M 240,270 A 25,25 0 1,0 290,270 A 25,25 0 1,0 240,270 Z M 255,270 A 10,10 0 1,0 275,270 A 10,10 0 1,0 255,270 Z"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna i due finestrini, il faro rotondo e la maniglia della portiera!", en: "Draw two side windows, front headlights, and door line!" },
-            tips: { it: "La linea verticale divide la portiera del guidatore.", en: "The center divider splits the front and rear seats." },
-            svgD: "M 205,185 L 245,185 L 275,230 L 205,230 Z M 155,230 L 125,230 L 150,185 L 195,185 L 195,230 Z M 335,245 C 342,245 342,258 335,258 Z M 200,230 L 200,270 M 175,240 L 190,240"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Traccia la strada sfrecciante sotto le ruote e la nuvoletta di fumo dietro!", en: "Draw the speedy road beneath the wheels and exhaust smoke puffs!" },
-            tips: { it: "I trattini sull'asfalto fanno sembrare l'auto in corsa a tutta velocità!", en: "Dashes along the road show the car zooming fast!" },
-            svgD: "M 40,295 L 360,295 M 80,310 L 140,310 M 180,310 L 240,310 M 280,310 L 340,310 M 55,262 C 40,255 35,240 45,235 C 35,225 45,215 55,220 C 60,210 75,215 70,228"
-          }
-        ]
-      },
-      {
-        id: "plane_08",
-        title: { it: "Aereo nei Cieli", en: "Airplane in the Sky" },
-        category: "Mezzi",
-        difficulty: "Medio",
-        iconEmoji: "✈️",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Traccia una lunga fusoliera arrotondata con il muso a destra e la coda a sinistra.", en: "Draw a long rounded fuselage with nose on the right and tail on the left." },
-            tips: { it: "Come un grande siluro morbido che vola tra le nuvole.", en: "Like a sleek smooth torpedo floating through air." },
-            svgD: "M 75,190 C 75,160 300,160 330,185 C 335,190 335,195 330,200 C 300,215 75,215 75,190 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Aggiungi le due grandi ali inclinate per spiccare il volo!", en: "Add two large angled wings ready to take flight!" },
-            tips: { it: "L'ala superiore è più lunga perché è vista più da vicino.", en: "The upper wing looks larger in perspective." },
-            svgD: "M 175,175 L 235,90 L 275,90 L 225,175 Z M 185,215 L 215,265 L 240,265 L 215,215 Z"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna gli alettoni di coda per timonare in alto e in basso!", en: "Draw the tail wings and stabilizer fins!" },
-            tips: { it: "La pinna di coda aiuta l'aereo a volare dritto.", en: "The tail fin keeps the plane stable in mid-air." },
-            svgD: "M 115,175 L 70,110 L 105,110 L 135,175 Z M 110,205 L 80,235 L 100,235 L 125,205 Z"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Fai la cabina dei piloti, quattro oblò passeggeri e una soffice nuvoletta!", en: "Draw the cockpit windscreen, four passenger windows, and a fluffy cloud!" },
-            tips: { it: "Gli oblò sono cerchietti allineati lungo la fusoliera.", en: "Portholes line up neatly along the passenger cabin." },
-            svgD: "M 295,173 Q 315,178 322,188 L 305,188 Z M 170,192 A 4,4 0 1,1 170,192.1 M 200,192 A 4,4 0 1,1 200,192.1 M 230,192 A 4,4 0 1,1 230,192.1 M 260,192 A 4,4 0 1,1 260,192.1 M 265,285 C 255,270 280,255 295,265 C 310,255 330,265 330,280 C 345,280 345,300 330,305 L 270,305 C 255,305 255,290 265,285 Z"
-          }
-        ]
-      },
-      {
-        id: "rocket_09",
-        title: { it: "Razzo Spaziale", en: "Space Rocket" },
-        category: "Mezzi",
-        difficulty: "Medio",
-        iconEmoji: "🚀",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna il corpo cilindrico slanciato con la punta conica ogiva!", en: "Draw the tall rocket body cylinder with a pointed nose cone!" },
-            tips: { it: "Traccia due linee parallele verticali e uniscile in cima con un triangolo.", en: "Two straight vertical lines capped with an aerodynamic cone." },
-            svgD: "M 160,260 L 160,155 C 160,120 200,75 200,75 C 200,75 240,120 240,155 L 240,260 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Aggiungi le alette stabilizzatrici laterali e la bocca di fuoco sotto!", en: "Add stabilizing side fins and the bottom thruster nozzle!" },
-            tips: { it: "Le ali a triangolo curvato tengono il razzo in rotta verso le stelle.", en: "Curved triangle fins keep the rocket flying steady." },
-            svgD: "M 160,215 L 115,265 C 135,270 155,265 160,250 Z M 240,215 L 285,265 C 265,270 245,265 240,250 Z M 195,215 L 200,260 L 205,215 Z M 175,260 L 170,272 L 230,272 L 225,260"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Traccia il grande doppio oblò rotondo per gli astronauti e la linea sul cono!", en: "Draw the astronaut's double round window and nose stripes!" },
-            tips: { it: "Un cerchio dentro l'altro fa sembrare il vetro super resistente.", en: "A circle inside another circle creates reinforced glass." },
-            svgD: "M 200,150 A 24,24 0 1,0 200,198 A 24,24 0 1,0 200,150 Z M 200,158 A 16,16 0 1,0 200,190 A 16,16 0 1,0 200,158 Z M 165,135 Q 200,145 235,135"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Disegna le potenti fiamme di lancio a zig-zag e tante stelline luminose!", en: "Draw dynamic fiery blastoff flames and glittering stars around!" },
-            tips: { it: "Linee a zig-zag appuntite creano l'energia del decollo spaziale!", en: "Zigzag fire tongues give maximum launching power." },
-            svgD: "M 175,272 L 180,340 L 195,295 L 200,360 L 205,295 L 220,340 L 225,272 Z M 185,272 L 190,315 L 200,335 L 210,315 L 215,272 Z M 95,115 L 105,115 M 100,110 L 100,120 M 300,135 L 310,135 M 305,130 L 305,140 M 110,200 A 3,3 0 1,1 110,200.1 M 295,210 A 3,3 0 1,1 295,210.1"
-          }
-        ]
-      },
-      {
-        id: "boat_10",
-        title: { it: "Barchetta a Vela", en: "Sailboat" },
-        category: "Mezzi",
-        difficulty: "Facile",
-        iconEmoji: "⛵",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna il fondo curvo dello scafo della barchetta!", en: "Draw the smooth curved hull of the boat!" },
-            tips: { it: "I bordi salgono morbidi alle due estremità per galleggiare bene.", en: "The ends slope gently upward to float gracefully." },
-            svgD: "M 80,260 L 115,315 C 160,330 240,330 285,315 L 320,260 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Alza un alto albero maestro dritto con la bandierina del vento in cima!", en: "Raise a tall straight mast with a wind flag at the peak!" },
-            tips: { it: "La bandierina mostra da che parte soffia la brezza marina.", en: "The little flag shows which way the sea breeze blows." },
-            svgD: "M 195,260 L 195,75 M 195,75 L 230,88 L 195,100"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna la grande vela maestra a triangolo e il fiocco davanti!", en: "Draw the large triangular main sail and the front jib sail!" },
-            tips: { it: "Due triangoli gonfiati dal vento pronti a navigare.", en: "Two crisp sails catching the fresh ocean wind." },
-            svgD: "M 190,95 L 115,245 L 190,245 Z M 202,110 L 275,245 L 202,245 Z"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Traccia le onde del mare e un simpatico gabbiano che vola in alto!", en: "Sketch rolling ocean waves and a flying seagull up above!" },
-            tips: { it: "Le onde sono morbide curve collegate una dopo l'altra.", en: "Waves are soft repeating curves under the boat." },
-            svgD: "M 50,335 Q 90,315 130,335 Q 170,355 210,335 Q 250,315 290,335 Q 330,355 365,335 M 285,110 Q 300,95 315,110 Q 330,95 345,110"
-          }
-        ]
-      },
-    
-      // -------------------------------------------------------------
-      // CATEGORIA 3: 🌟 Oggetti & Natura (4 soggetti)
-      // -------------------------------------------------------------
-      {
-        id: "star_11",
-        title: { it: "Stella Sorridente", en: "Smiling Star" },
-        category: "Natura",
-        difficulty: "Facile",
-        iconEmoji: "⭐",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Traccia una magica stella a cinque punte bella grande!", en: "Draw a magical five-pointed star nice and bright!" },
-            tips: { it: "Ogni punta sale e scende con linee dritte e decise.", en: "Each point goes up and down with steady, clean strokes." },
-            svgD: "M 200,80 L 230,155 L 310,160 L 250,210 L 270,290 L 200,245 L 130,290 L 150,210 L 90,160 L 170,155 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Al centro fai due occhioni rotondi, perfettamente allineati!", en: "Make two round eyes in the center, perfectly aligned!" },
-            tips: { it: "Gli occhietti a uguale altezza donano uno sguardo dolcissimo.", en: "Keeping eyes balanced makes the face look super sweet." },
-            svgD: "M 175,185 A 8,8 0 1,1 175,185.1 M 225,185 A 8,8 0 1,1 225,185.1"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna una boccuccia sorridente e due guancette felici!", en: "Draw a happy smile and two rosy blushing cheeks!" },
-            tips: { it: "La curva del sorriso parte proprio tra i due occhietti.", en: "The smiling curve sits cheerfully right below the eyes." },
-            svgD: "M 185,210 Q 200,225 215,210 M 160,205 A 6,6 0 1,1 160,205.1 M 240,205 A 6,6 0 1,1 240,205.1"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Aggiungi bagliori a croce e stelline scintillanti nello spazio attorno!", en: "Add shining cross-sparkles and tiny stars around!" },
-            tips: { it: "Le stelline vicine fanno sembrare la stella luminosa e splendente.", en: "Surrounding sparkles make the star glow with magic." },
-            svgD: "M 75,95 L 90,95 M 82.5,87.5 L 82.5,102.5 M 310,240 L 325,240 M 317.5,232.5 L 317.5,247.5 M 310,95 A 4,4 0 1,1 310,95.1 M 90,240 A 4,4 0 1,1 90,240.1"
-          }
-        ]
-      },
-      {
-        id: "icecream_12",
-        title: { it: "Gelato Goloso", en: "Yummy Ice Cream" },
-        category: "Natura",
-        difficulty: "Facile",
-        iconEmoji: "🍦",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna un grande triangolo rovesciato per il cono di cialda!", en: "Draw a big inverted triangle for the crispy waffle cone!" },
-            tips: { it: "La punta in basso regge tutto il gelato goloso.", en: "The bottom point holds all the delicious ice cream." },
-            svgD: "M 140,220 L 200,360 L 260,220 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Fai la trama a rombi incrociati della cialda croccante!", en: "Draw criss-cross diamond lines across the waffle cone!" },
-            tips: { it: "Linee oblique che si incrociano creano la tipica cialda da gelateria.", en: "Diagonal crossing lines give authentic waffle texture." },
-            svgD: "M 155,255 L 245,255 M 170,290 L 230,290 M 185,325 L 215,325 M 175,220 L 225,335 M 225,220 L 175,335"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna due soffici palline di gelato una sopra l'altra con i bordi cremosi!", en: "Draw two fluffy scoops of ice cream with melting creamy edges!" },
-            tips: { it: "La pallina sotto ha ondine morbide che sembrano panna che cola.", en: "The bottom scoop ripples gently over the cone edge." },
-            svgD: "M 130,220 C 130,175 270,175 270,220 C 270,232 250,232 240,222 C 230,232 210,232 200,222 C 190,232 170,232 160,222 C 150,232 130,232 130,220 Z M 150,185 C 145,120 255,120 250,185"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Aggiungi una bella ciliegina lucida con il gambo e zuccherini colorati!", en: "Add a shiny cherry on top with a stem and sweet sprinkles!" },
-            tips: { it: "La ciliegina in cima rende il gelato irresistibile!", en: "A cherry on top makes the treat look complete and yummy!" },
-            svgD: "M 200,105 A 14,14 0 1,1 200,105.1 M 205,92 C 220,65 240,70 245,75 M 165,150 L 175,150 M 220,145 L 230,150 M 195,140 L 200,148 M 175,200 L 185,200 M 215,200 L 225,200"
-          }
-        ]
-      },
-      {
-        id: "house_13",
-        title: { it: "Casetta nel Bosco", en: "Cozy House" },
-        category: "Natura",
-        difficulty: "Facile",
-        iconEmoji: "🏠",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Disegna un bel quadrato solido per i muri della casetta!", en: "Draw a solid sturdy square for the house walls!" },
-            tips: { it: "Linee dritte e orizzontali formano le fondamenta sicure.", en: "Straight level lines form a strong foundation." },
-            svgD: "M 120,200 L 280,200 L 280,330 L 120,330 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Aggiungi un grande tetto a punta triangolare sopra i muri!", en: "Add a large triangular pointed roof on top of the walls!" },
-            tips: { it: "Il tetto sporge un po' ai lati per riparare dalla pioggia.", en: "Eaves overhang slightly on both sides to keep rain away." },
-            svgD: "M 100,205 L 200,105 L 300,205"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna la porta d'ingresso ad arco con la maniglia e le finestrelle a croce!", en: "Draw an arched front door with doorknob and two square windows!" },
-            tips: { it: "La croce divide i vetri luminosi delle finestre.", en: "Cross dividers give cozy paned window glass." },
-            svgD: "M 180,330 L 180,260 C 180,250 220,250 220,260 L 220,330 M 212,290 A 2.5,2.5 0 1,1 212,290.1 M 135,235 L 165,235 L 165,265 L 135,265 Z M 150,235 L 150,265 M 135,250 L 165,250 M 235,235 L 265,235 L 265,265 L 235,265 Z M 250,235 L 250,265 M 235,250 L 265,250"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Fai il camino con lo sbuffo di fumo e un abbaino rotondo in soffitta!", en: "Add a chimney puffing gentle smoke and a round attic window!" },
-            tips: { it: "Il fumo a spirale fa sentire la casa calda e accogliente.", en: "Swirling chimney smoke makes the cottage feel warm and lived-in." },
-            svgD: "M 235,140 L 235,95 L 260,95 L 260,165 M 230,95 L 265,95 M 248,85 C 240,70 255,60 245,45 C 240,35 255,25 250,15 M 200,140 A 15,15 0 1,0 200,170 A 15,15 0 1,0 200,140 Z M 200,140 L 200,170 M 185,155 L 215,155"
-          }
-        ]
-      },
-      {
-        id: "mushroom_14",
-        title: { it: "Funghetto Magico", en: "Magic Mushroom" },
-        category: "Natura",
-        difficulty: "Facile",
-        iconEmoji: "🍄",
-        steps: [
-          {
-            stepNumber: 1,
-            instruction: { it: "Traccia una grande cupola larga e rotonda come un ombrello per il cappello!", en: "Draw a wide rounded umbrella dome for the mushroom cap!" },
-            tips: { it: "Fai la base leggermente piatta e la cima ben arcuata.", en: "Keep the bottom rim gently flat and the top nicely arched." },
-            svgD: "M 100,210 C 100,105 300,105 300,210 C 300,228 100,228 100,210 Z"
-          },
-          {
-            stepNumber: 2,
-            instruction: { it: "Disegna il gambo paffuto e robusto che spunta sotto il cappello!", en: "Draw the chubby sturdy stem growing beneath the cap!" },
-            tips: { it: "Il gambo è un po' più largo in basso dove tocca il prato.", en: "The stem widens slightly at the base where it meets the soil." },
-            svgD: "M 160,220 C 150,270 145,310 160,330 C 180,335 220,335 240,330 C 255,310 250,270 240,220"
-          },
-          {
-            stepNumber: 3,
-            instruction: { it: "Disegna cinque bei pois rotondi distribuiti dentro il cappello!", en: "Draw five circular polka dots neatly inside the cap!" },
-            tips: { it: "I pois sono tutti all'interno del cappello per renderlo magico.", en: "Keep all dots neatly contained inside the mushroom cap." },
-            svgD: "M 200,145 A 13,13 0 1,1 200,145.1 M 165,175 A 10,10 0 1,1 165,175.1 M 235,175 A 10,10 0 1,1 235,175.1 M 175,130 A 7,7 0 1,1 175,130.1 M 225,130 A 7,7 0 1,1 225,130.1"
-          },
-          {
-            stepNumber: 4,
-            instruction: { it: "Aggiungi due occhietti furbi, un dolce sorrisino e ciuffetti d'erba!", en: "Add two smiling eyes, a sweet grin, and blades of grass!" },
-            tips: { it: "Il funghetto sembra un simpatico personaggio dei cartoni animati!", en: "The face turns the mushroom into a sweet fairytale character!" },
-            svgD: "M 180,260 A 4,4 0 1,1 180,261 M 220,260 A 4,4 0 1,1 220,261 M 195,275 Q 200,285 205,275 M 120,330 L 135,310 L 145,335 L 160,315 M 240,335 L 255,315 L 265,335 L 280,310"
-          }
-        ]
+    /* -------------------------------------------------------------
+       2. HELPER RENDERING GRAFICO DEI TRATTI E COLORI
+       ------------------------------------------------------------- */
+    function getLessonStrokes(lesson) {
+      if (!lesson || !lesson.steps) return [];
+      return lesson.steps.flatMap(s => (s.strokes || [{ d: s.svgD }]).map(st => typeof st === 'string' ? { d: st } : st));
+    }
+
+    function renderLessonSvg(lesson, withColor = true) {
+      if (!lesson) return "";
+      let colorMarkup = "";
+      if (withColor && lesson.colors && lesson.colors.length) {
+        colorMarkup = lesson.colors.map(c => `<path d="${c.d}" fill="${c.fill}" stroke="none"/>`).join("");
       }
-    ];
+      const strokes = getLessonStrokes(lesson);
+      const strokeMarkup = strokes.map(st => {
+        const stroke = (st.stroke === false) ? "none" : "#2B2D42";
+        const fill = st.fill || "none";
+        return `<path d="${st.d}" fill="${fill}" stroke="${stroke}" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+      }).join("");
+      return colorMarkup + strokeMarkup;
+    }
     
 
     /* -------------------------------------------------------------
@@ -2097,16 +1973,47 @@
       }
     }
 
+    function soundPop() {
+      playTone(587.33, "sine", 0.05);
+    }
+
+    function soundPencil() {
+      playTone(280, "sawtooth", 0.04);
+    }
+
     function soundStepSuccess() {
-      playTone(523.25, "triangle", 0.12);
-      setTimeout(() => playTone(659.25, "triangle", 0.16), 100);
+      playTone(523.25, "triangle", 0.09);
+      setTimeout(() => playTone(659.25, "triangle", 0.09), 70);
+      setTimeout(() => playTone(783.99, "triangle", 0.11), 140);
+      setTimeout(() => playTone(1046.50, "triangle", 0.14), 210);
     }
 
     function soundFanfare() {
-      const notes = [523.25, 659.25, 783.99, 1046.50];
+      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
       notes.forEach((freq, idx) => {
-        setTimeout(() => playTone(freq, "triangle", 0.25), idx * 120);
+        setTimeout(() => playTone(freq, "triangle", 0.28), idx * 110);
       });
+    }
+
+    function speakCurrentInstruction() {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const text = document.getElementById("stepInstructionText").textContent;
+      if (!text) return;
+
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = state.lang === 'en' ? 'en-US' : 'it-IT';
+      utter.rate = 0.94;
+      utter.pitch = 1.15;
+
+      const btn = document.getElementById("btnSpeakInstruction");
+      if (btn) btn.classList.add("speaking");
+
+      utter.onend = utter.onerror = () => {
+        if (btn) btn.classList.remove("speaking");
+      };
+
+      window.speechSynthesis.speak(utter);
     }
 
     function changeVolume(val) {
@@ -2183,11 +2090,26 @@
       document.getElementById("galleryHeroSubtitle").textContent = t.galleryHeroSubtitle;
       document.getElementById("navLblHome").textContent = t.navHome;
       document.getElementById("navLblLearn").textContent = t.navLearn;
+      document.getElementById("navLblCanvas").textContent = t.navCanvas;
       document.getElementById("navLblGallery").textContent = t.navGallery;
       document.getElementById("settingsTitle").textContent = t.settingsTitle;
       document.getElementById("settingsSubtitle").textContent = t.settingsSubtitle;
       document.getElementById("lblVolume").textContent = t.lblVolume;
       document.getElementById("lblLanguage").textContent = t.lblLanguage;
+
+      const speakBtn = document.getElementById("btnSpeakInstruction");
+      if (speakBtn) speakBtn.title = t.btnSpeakTitle;
+
+      const canvasTitle = document.getElementById("lblCanvasTitle");
+      if (canvasTitle) canvasTitle.textContent = t.lblCanvasTitle;
+      const canvasSub = document.getElementById("lblCanvasSubtitle");
+      if (canvasSub) canvasSub.textContent = t.lblCanvasSubtitle;
+      const canvasSave = document.getElementById("lblCanvasSaveText");
+      if (canvasSave) canvasSave.textContent = t.lblCanvasSaveText;
+      const traceGuide = document.getElementById("lblTraceGuide");
+      if (traceGuide) traceGuide.textContent = t.lblTraceGuide;
+      const optNo = document.getElementById("optNoGuide");
+      if (optNo) optNo.textContent = t.optNoGuide;
     }
 
     /* -------------------------------------------------------------
@@ -2195,6 +2117,8 @@
        ------------------------------------------------------------- */
     function switchView(viewName) {
       clearConfettiEffects();
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
       document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
       document.querySelectorAll(".nav-item").forEach(btn => btn.classList.remove("active"));
 
@@ -2205,6 +2129,10 @@
       } else if (viewName === 'player') {
         document.getElementById("viewPlayer").classList.add("active");
         document.getElementById("navLearn").classList.add("active");
+      } else if (viewName === 'canvas') {
+        document.getElementById("viewCanvas").classList.add("active");
+        document.getElementById("navCanvas").classList.add("active");
+        initOrResizeCanvas();
       } else if (viewName === 'gallery') {
         document.getElementById("viewGallery").classList.add("active");
         document.getElementById("navGallery").classList.add("active");
@@ -2258,7 +2186,6 @@
         card.className = "lesson-card";
         card.onclick = () => startLesson(lesson.id);
 
-        const allPaths = lesson.steps.map(s => `<path d="${s.svgD}" fill="none" stroke="#2B2D42" stroke-width="4.5" stroke-linecap="round"/>`).join("");
         const titleStr = lesson.title[state.lang] || lesson.title.it;
         const diffStr = lesson.difficulty === "Facile" ? t.levelEasy : (lesson.difficulty === "Medio" ? t.levelMedium : t.levelHard);
         const isHard = lesson.difficulty === "Avanzato";
@@ -2267,9 +2194,9 @@
           <div class="lesson-badge ${isDone ? 'badge-completed' : 'badge-todo'}">
             ${isDone ? t.badgeDone : t.badgeTodo}
           </div>
-          <div class="card-thumb">
+          <div class="card-thumb" style="background: ${lesson.bg || '#F9FBFC'};">
             <svg viewBox="0 0 400 400">
-              ${allPaths}
+              ${renderLessonSvg(lesson, true)}
             </svg>
           </div>
           <div class="card-body">
@@ -2360,6 +2287,11 @@
       }
     }
 
+    function normalizeStroke(st) {
+      if (typeof st === 'string') return { d: st };
+      return st;
+    }
+
     function renderStageSvg(currentStepIdx) {
       const svg = document.getElementById("drawingStageSvg");
       svg.innerHTML = "";
@@ -2368,17 +2300,44 @@
 
       // Passaggi precedenti
       for (let i = 0; i < currentStepIdx; i++) {
-        const prevPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        prevPath.setAttribute("d", steps[i].svgD);
-        prevPath.setAttribute("class", "stroke-previous");
-        svg.appendChild(prevPath);
+        const stepStrokes = (steps[i].strokes || [{ d: steps[i].svgD }]).map(normalizeStroke);
+        stepStrokes.forEach(st => {
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute("d", st.d);
+          if (st.stroke === false) {
+            path.setAttribute("fill", st.fill || "#2B2D42");
+            path.setAttribute("stroke", "none");
+          } else {
+            path.setAttribute("class", "stroke-previous");
+            if (st.fill && st.fill !== "none") {
+              path.setAttribute("fill", st.fill);
+            }
+          }
+          svg.appendChild(path);
+        });
       }
 
       // Passaggio corrente
-      const curPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      curPath.setAttribute("d", steps[currentStepIdx].svgD);
-      curPath.setAttribute("class", "stroke-current");
-      svg.appendChild(curPath);
+      const curStrokes = (steps[currentStepIdx].strokes || [{ d: steps[currentStepIdx].svgD }]).map(normalizeStroke);
+      curStrokes.forEach((st, idx) => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", st.d);
+        const delay = (idx * 0.35).toFixed(2);
+
+        if (st.stroke === false) {
+          path.setAttribute("fill", st.fill || "#2B2D42");
+          path.setAttribute("stroke", "none");
+          path.setAttribute("class", "stroke-fill-only");
+          path.style.animationDelay = `${delay}s`;
+        } else {
+          path.setAttribute("class", "stroke-current" + (st.fill ? " has-fill" : ""));
+          if (st.fill) {
+            path.style.setProperty("--target-fill", st.fill);
+          }
+          path.style.animationDelay = `${delay}s`;
+        }
+        svg.appendChild(path);
+      });
     }
 
     function replayCurrentStep() {
@@ -2420,6 +2379,14 @@
 
       const titleStr = lesson.title[state.lang] || lesson.title.it;
       document.getElementById("congratsMessage").innerHTML = t.congratsMsg.replace("{title}", titleStr);
+
+      // Mostra l'opera d'arte colorata completata nel modal
+      const artSvg = document.getElementById("modalArtworkSvg");
+      const artWrap = document.getElementById("modalArtworkPreviewWrap");
+      if (artSvg) {
+        artSvg.innerHTML = renderLessonSvg(lesson, true);
+        if (artWrap) artWrap.style.background = lesson.bg || "#FFF";
+      }
 
       // Mostra eventuale foto già presente o resetta l'anteprima
       const existingPhoto = state.photos[lesson.id];
@@ -2503,8 +2470,8 @@
       container.innerHTML = "";
       const t = I18N[state.lang];
 
-      // Solo disegni completati (tutti i passaggi) e ancora esistenti
-      const completed = state.completedLessons.filter(id => lessonsData.some(l => l.id === id));
+      // Disegni completati (sia lezioni che disegni liberi da lavagna)
+      const completed = state.completedLessons;
 
       if (completed.length === 0) {
         container.innerHTML = `
@@ -2523,10 +2490,9 @@
 
       completed.forEach(id => {
         const lesson = lessonsData.find(l => l.id === id);
-        if (!lesson) return;
-
-        const allPaths = lesson.steps.map(s => `<path d="${s.svgD}" fill="none" stroke="#2B2D42" stroke-width="4.5" stroke-linecap="round"/>`).join("");
-        const titleStr = lesson.title[state.lang] || lesson.title.it;
+        const isFreeDraw = !lesson;
+        const titleStr = isFreeDraw ? (state.lang === 'it' ? "Disegno Libero" : "Free Drawing") : (lesson.title[state.lang] || lesson.title.it);
+        const iconEmoji = isFreeDraw ? "🎨" : lesson.iconEmoji;
         const photoUrl = state.photos[id];
 
         const item = document.createElement("div");
@@ -2548,23 +2514,21 @@
           `;
         }
 
+        const vectorMarkup = isFreeDraw
+          ? `<div class="vector-box" style="background: #FFF5F7; display:flex; align-items:center; justify-content:center; font-size:3.2rem;">✨🎨</div>`
+          : `<div class="vector-box" style="background: ${lesson.bg || '#F8FAF9'};"><svg viewBox="0 0 400 400">${renderLessonSvg(lesson, true)}</svg></div>`;
+
         item.innerHTML = `
-          <h4 style="font-size: 1.25rem; margin-bottom: 6px;">${lesson.iconEmoji} ${titleStr}</h4>
+          <h4 style="font-size: 1.25rem; margin-bottom: 6px;">${iconEmoji} ${titleStr}</h4>
           <span style="color: #06D6A0; font-weight:700; font-size:0.88rem;">⭐ ${t.badgeDone}</span>
           
           <div class="completed-thumb-duo">
-            <div class="vector-box">
-              <svg viewBox="0 0 400 400">
-                ${allPaths}
-              </svg>
-            </div>
+            ${vectorMarkup}
             ${photoMarkup}
           </div>
 
           <div class="art-actions">
-            <button class="art-action-btn redo" id="btnRedo_${id}" onclick="startLesson('${id}')">
-              <span class="ico">🔄</span><span>${t.actionRedo}</span>
-            </button>
+            ${isFreeDraw ? '' : `<button class="art-action-btn redo" id="btnRedo_${id}" onclick="startLesson('${id}')"><span class="ico">🔄</span><span>${t.actionRedo}</span></button>`}
             <button class="art-action-btn photo" id="btnPhoto_${id}" onclick="triggerPhotoForLesson('${id}')">
               <span class="ico">📷</span><span>${photoUrl ? t.actionChangePhoto : t.actionPhoto}</span>
             </button>
@@ -2595,7 +2559,6 @@
           });
         }
         e.target.value = "";
-        // Ripristina il gestore usato dal modal di congratulazioni
         input.onchange = handlePhotoCaptured;
       };
       input.click();
@@ -2606,11 +2569,10 @@
 
     function askDeleteDrawing(lessonId) {
       const lesson = lessonsData.find(l => l.id === lessonId);
-      if (!lesson) return;
       pendingDeleteId = lessonId;
       const t = I18N[state.lang];
-      const titleStr = lesson.title[state.lang] || lesson.title.it;
-      document.getElementById("confirmDeleteMsg").innerHTML = t.confirmDeleteMsg.replace("{title}", `${lesson.iconEmoji} ${titleStr}`);
+      const titleStr = lesson ? `${lesson.iconEmoji} ${lesson.title[state.lang] || lesson.title.it}` : (state.lang === 'it' ? "🎨 Disegno Libero" : "🎨 Free Drawing");
+      document.getElementById("confirmDeleteMsg").innerHTML = t.confirmDeleteMsg.replace("{title}", titleStr);
       document.getElementById("confirmDeleteModal").classList.add("active");
       playTone(330, "sine", 0.1);
     }
@@ -2642,12 +2604,309 @@
     }
 
     /* -------------------------------------------------------------
+       14. MOTORE LAVAGNA MAGICA & RICALCO SU SCHERMO
+       ------------------------------------------------------------- */
+    const PALETTE_COLORS = [
+      { hex: "#2B2D42", label: "Nero Inchiostro" },
+      { hex: "#FF5E7E", label: "Rosa Magico" },
+      { hex: "#FF8E53", label: "Arancione" },
+      { hex: "#FFD166", label: "Giallo Sole" },
+      { hex: "#06D6A0", label: "Verde Menta" },
+      { hex: "#3A86FF", label: "Blu Cielo" },
+      { hex: "#9D4EDD", label: "Viola Uva" },
+      { hex: "rainbow", label: "Penna Arcobaleno", isSpecial: "rainbow" },
+      { hex: "eraser",  label: "Gomma", isSpecial: "eraser" }
+    ];
+
+    let canvasState = {
+      ctx: null,
+      canvas: null,
+      isDrawing: false,
+      color: "#2B2D42",
+      isRainbow: false,
+      isEraser: false,
+      brushSize: 8,
+      rainbowHue: 0,
+      history: [],
+      historyIndex: -1,
+      ghostOpacity: 0.35,
+      lastPoint: null,
+      activeLessonGuideId: ""
+    };
+
+    function initCanvasApp() {
+      const sel = document.getElementById("selectTraceGuide");
+      if (sel && sel.options.length <= 1) {
+        lessonsData.forEach(l => {
+          const opt = document.createElement("option");
+          opt.value = l.id;
+          opt.textContent = `${l.iconEmoji} ${l.title[state.lang] || l.title.it}`;
+          sel.appendChild(opt);
+        });
+      }
+
+      const palette = document.getElementById("paletteSwatches");
+      if (palette && palette.children.length === 0) {
+        PALETTE_COLORS.forEach((c, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "color-swatch-btn" + (idx === 0 ? " active" : "");
+          btn.title = c.label;
+          if (c.isSpecial === "rainbow") {
+            btn.classList.add("rainbow");
+            btn.innerHTML = "🌈";
+          } else if (c.isSpecial === "eraser") {
+            btn.classList.add("eraser");
+            btn.innerHTML = "🧹";
+          } else {
+            btn.style.backgroundColor = c.hex;
+          }
+          btn.onclick = () => selectColor(c, btn);
+          palette.appendChild(btn);
+        });
+      }
+
+      setupCanvasEvents();
+    }
+
+    function selectColor(colorObj, btn) {
+      soundPop();
+      document.querySelectorAll(".color-swatch-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      if (colorObj.isSpecial === "rainbow") {
+        canvasState.isRainbow = true;
+        canvasState.isEraser = false;
+      } else if (colorObj.isSpecial === "eraser") {
+        canvasState.isEraser = true;
+        canvasState.isRainbow = false;
+      } else {
+        canvasState.color = colorObj.hex;
+        canvasState.isRainbow = false;
+        canvasState.isEraser = false;
+      }
+    }
+
+    function setBrushSize(size) {
+      soundPop();
+      canvasState.brushSize = size;
+      document.querySelectorAll(".brush-size-btn").forEach(b => b.classList.remove("active"));
+      if (size <= 4) document.querySelector(".brush-size-btn.size-sm")?.classList.add("active");
+      else if (size <= 8) document.querySelector(".brush-size-btn.size-md")?.classList.add("active");
+      else document.querySelector(".brush-size-btn.size-lg")?.classList.add("active");
+    }
+
+    function initOrResizeCanvas() {
+      const canvas = document.getElementById("paintCanvas");
+      if (!canvas) return;
+      if (!canvasState.canvas) {
+        canvasState.canvas = canvas;
+        canvasState.ctx = canvas.getContext("2d");
+        initCanvasApp();
+      }
+      if (canvasState.history.length === 0) {
+        saveCanvasState();
+      }
+    }
+
+    function setupCanvasEvents() {
+      const canvas = document.getElementById("paintCanvas");
+      if (!canvas || canvas.dataset.eventsAttached) return;
+      canvas.dataset.eventsAttached = "true";
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        };
+      }
+
+      function onPointerDown(e) {
+        e.preventDefault();
+        canvasState.isDrawing = true;
+        const pos = getPos(e);
+        canvasState.lastPoint = pos;
+        soundPencil();
+        
+        const ctx = canvasState.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        const width = canvasState.brushSize * 2.5;
+
+        if (canvasState.isEraser) {
+          ctx.globalCompositeOperation = "destination-out";
+        } else {
+          ctx.globalCompositeOperation = "source-over";
+          if (canvasState.isRainbow) {
+            canvasState.rainbowHue = (canvasState.rainbowHue + 15) % 360;
+            ctx.fillStyle = `hsl(${canvasState.rainbowHue}, 100%, 50%)`;
+          } else {
+            ctx.fillStyle = canvasState.color;
+          }
+        }
+        ctx.arc(pos.x, pos.y, width / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function onPointerMove(e) {
+        if (!canvasState.isDrawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        const last = canvasState.lastPoint;
+        if (!last) { canvasState.lastPoint = pos; return; }
+
+        const ctx = canvasState.ctx;
+        ctx.save();
+        ctx.beginPath();
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.lineWidth = canvasState.brushSize * 2.5;
+
+        if (canvasState.isEraser) {
+          ctx.globalCompositeOperation = "destination-out";
+        } else {
+          ctx.globalCompositeOperation = "source-over";
+          if (canvasState.isRainbow) {
+            canvasState.rainbowHue = (canvasState.rainbowHue + 8) % 360;
+            ctx.strokeStyle = `hsl(${canvasState.rainbowHue}, 100%, 50%)`;
+          } else {
+            ctx.strokeStyle = canvasState.color;
+          }
+        }
+
+        const midX = (last.x + pos.x) / 2;
+        const midY = (last.y + pos.y) / 2;
+        ctx.moveTo(last.x, last.y);
+        ctx.quadraticCurveTo(last.x, last.y, midX, midY);
+        ctx.stroke();
+        ctx.restore();
+
+        canvasState.lastPoint = pos;
+      }
+
+      function onPointerUp(e) {
+        if (canvasState.isDrawing) {
+          canvasState.isDrawing = false;
+          canvasState.lastPoint = null;
+          saveCanvasState();
+        }
+      }
+
+      canvas.addEventListener("mousedown", onPointerDown);
+      canvas.addEventListener("mousemove", onPointerMove);
+      window.addEventListener("mouseup", onPointerUp);
+
+      canvas.addEventListener("touchstart", onPointerDown, { passive: false });
+      canvas.addEventListener("touchmove", onPointerMove, { passive: false });
+      window.addEventListener("touchend", onPointerUp);
+      window.addEventListener("touchcancel", onPointerUp);
+    }
+
+    function saveCanvasState() {
+      const canvas = canvasState.canvas;
+      if (!canvas || !canvasState.ctx) return;
+      if (canvasState.historyIndex < canvasState.history.length - 1) {
+        canvasState.history = canvasState.history.slice(0, canvasState.historyIndex + 1);
+      }
+      canvasState.history.push(canvasState.ctx.getImageData(0, 0, canvas.width, canvas.height));
+      if (canvasState.history.length > 12) {
+        canvasState.history.shift();
+      }
+      canvasState.historyIndex = canvasState.history.length - 1;
+    }
+
+    function undoCanvas() {
+      soundPop();
+      if (canvasState.historyIndex > 0) {
+        canvasState.historyIndex--;
+        const imgData = canvasState.history[canvasState.historyIndex];
+        canvasState.ctx.putImageData(imgData, 0, 0);
+      } else if (canvasState.historyIndex === 0) {
+        canvasState.ctx.clearRect(0, 0, canvasState.canvas.width, canvasState.canvas.height);
+      }
+    }
+
+    function clearCanvas() {
+      soundPop();
+      if (!canvasState.canvas || !canvasState.ctx) return;
+      canvasState.ctx.clearRect(0, 0, canvasState.canvas.width, canvasState.canvas.height);
+      saveCanvasState();
+    }
+
+    function changeTraceGuide(lessonId) {
+      soundPop();
+      canvasState.activeLessonGuideId = lessonId;
+      const overlay = document.getElementById("ghostGuideOverlay");
+      const svg = document.getElementById("ghostGuideSvg");
+      if (!lessonId) {
+        overlay.style.display = "none";
+        svg.innerHTML = "";
+        return;
+      }
+      const lesson = lessonsData.find(l => l.id === lessonId);
+      if (lesson) {
+        svg.innerHTML = renderLessonSvg(lesson, false);
+        overlay.style.display = "flex";
+      }
+    }
+
+    function cycleGhostOpacity() {
+      soundPop();
+      const overlay = document.getElementById("ghostGuideOverlay");
+      if (canvasState.ghostOpacity === 0.35) canvasState.ghostOpacity = 0.65;
+      else if (canvasState.ghostOpacity === 0.65) canvasState.ghostOpacity = 0.15;
+      else canvasState.ghostOpacity = 0.35;
+      overlay.style.opacity = canvasState.ghostOpacity;
+    }
+
+    function saveCanvasToGallery() {
+      if (!canvasState.canvas) return;
+      
+      const temp = document.createElement("canvas");
+      temp.width = canvasState.canvas.width;
+      temp.height = canvasState.canvas.height;
+      const tCtx = temp.getContext("2d");
+      tCtx.fillStyle = "#FFFFFF";
+      tCtx.fillRect(0, 0, temp.width, temp.height);
+      tCtx.drawImage(canvasState.canvas, 0, 0);
+      const dataUrl = temp.toDataURL("image/jpeg", 0.82);
+
+      const targetLessonId = canvasState.activeLessonGuideId || ("free_" + Date.now());
+      
+      if (!state.completedLessons.includes(targetLessonId)) {
+        state.completedLessons.push(targetLessonId);
+      }
+      storePhoto(targetLessonId, dataUrl);
+      saveState();
+
+      soundFanfare();
+      triggerConfetti();
+      switchView('gallery');
+    }
+
+    /* -------------------------------------------------------------
        13. INIZIALIZZAZIONE
        ------------------------------------------------------------- */
     window.addEventListener("DOMContentLoaded", () => {
       initFilters();
       applyLocalization();
       renderLessonsGrid();
+      const params = new URLSearchParams(window.location.search);
+      const lId = params.get("lesson");
+      if (lId) {
+        startLesson(lId);
+        const sNum = parseInt(params.get("step"), 10);
+        if (!isNaN(sNum) && sNum > 0) {
+          loadStep(sNum - 1);
+        }
+      }
     });
   </script>
 </body>
