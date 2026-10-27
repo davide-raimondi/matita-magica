@@ -1248,41 +1248,64 @@
     /* Tracing select bar */
     .tracing-select-bar {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      flex-direction: column;
+      gap: 8px;
       background: #FFF9EB;
       border: 2px dashed #FFD166;
       border-radius: 16px;
       padding: 10px 14px;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .tracing-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
     }
 
     .tracing-label {
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       color: #7A5300;
       white-space: nowrap;
     }
 
     .tracing-select-bar select {
-      flex: 1;
-      border-radius: 10px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      border-radius: 12px;
       border: 1.5px solid #FFD166;
       background: white;
-      padding: 6px 10px;
+      padding: 8px 12px;
       font-family: inherit;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       color: var(--text-dark);
       cursor: pointer;
+      text-overflow: ellipsis;
+      outline: none;
+    }
+
+    .tracing-select-bar select:focus {
+      border-color: var(--primary);
     }
 
     .btn-toggle-trace-opacity {
       background: white;
       border: 1.5px solid #FFD166;
       border-radius: 10px;
-      padding: 6px 10px;
+      padding: 4px 10px;
       font-size: 1.1rem;
       cursor: pointer;
       transition: transform 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
     .btn-toggle-trace-opacity:active {
       transform: scale(0.92);
@@ -1542,11 +1565,13 @@
 
         <!-- Barra Selettore Sagoma Guida (Ghost Tracing) -->
         <div class="tracing-select-bar">
-          <span class="tracing-label">👻 <strong id="lblTraceGuide">Sagoma Guida:</strong></span>
+          <div class="tracing-header-row">
+            <span class="tracing-label">👻 <strong id="lblTraceGuide">Sagoma Guida:</strong></span>
+            <button class="btn-toggle-trace-opacity" id="btnToggleGhost" onclick="cycleGhostOpacity()" title="Regola trasparenza">👁️</button>
+          </div>
           <select id="selectTraceGuide" onchange="changeTraceGuide(this.value)">
             <option value="" id="optNoGuide">Nessuna guida (foglio bianco)</option>
           </select>
-          <button class="btn-toggle-trace-opacity" id="btnToggleGhost" onclick="cycleGhostOpacity()" title="Regola trasparenza">👁️</button>
         </div>
 
         <!-- Area Foglio da Disegno con Canvas e SVG Guida Sotto -->
@@ -1617,7 +1642,7 @@
     </div>
   </div>
 
-  <!-- MODAL IMPOSTAZIONI (Volume & Lingua) -->
+  <!-- MODAL IMPOSTAZIONI (Volume) -->
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-card">
       <div style="font-size: 3rem; margin-bottom: 6px;">⚙️</div>
@@ -1632,19 +1657,6 @@
           <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" oninput="changeVolume(this.value)">
           <span>🔊</span>
           <span id="volumeValueLabel" style="font-weight:700; width:45px;">80%</span>
-        </div>
-      </div>
-
-      <!-- Selezione Lingua -->
-      <div class="settings-group">
-        <label id="lblLanguage">🌍 Lingua / Language</label>
-        <div class="lang-buttons-row">
-          <button class="btn-lang active" id="btnLangIt" onclick="setLanguage('it')">
-            🇮🇹 Italiano
-          </button>
-          <button class="btn-lang" id="btnLangEn" onclick="setLanguage('en')">
-            🇬🇧 English
-          </button>
         </div>
       </div>
 
@@ -1865,7 +1877,7 @@
     let state = {
       completedLessons: safeParse(STORAGE_KEY_COMPLETED, []),
       photos: safeParse(STORAGE_KEY_PHOTOS, {}),
-      lang: localStorage.getItem(STORAGE_KEY_LANG) === "en" ? "en" : "it",
+      lang: "it",
       volume: parseFloat(localStorage.getItem(STORAGE_KEY_VOLUME) || "0.8"),
       currentLesson: null,
       currentStepIndex: 0,
@@ -1886,7 +1898,7 @@
 
     // Ritorna false se le foto non sono state salvate (memoria piena)
     function saveState() {
-      safeSet(STORAGE_KEY_LANG, state.lang);
+      safeSet(STORAGE_KEY_LANG, "it");
       safeSet(STORAGE_KEY_VOLUME, state.volume.toString());
       safeSet(STORAGE_KEY_COMPLETED, JSON.stringify(state.completedLessons));
       return safeSet(STORAGE_KEY_PHOTOS, JSON.stringify(state.photos));
@@ -2002,7 +2014,7 @@
       if (!text) return;
 
       const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = state.lang === 'en' ? 'en-US' : 'it-IT';
+      utter.lang = 'it-IT';
       utter.rate = 0.94;
       utter.pitch = 1.15;
 
@@ -2049,12 +2061,7 @@
        6. APPLICAZIONE DELLA LINGUA (I18N)
        ------------------------------------------------------------- */
     function setLanguage(lang) {
-      state.lang = lang === 'en' ? 'en' : 'it';
-
-      document.getElementById("btnLangIt").classList.toggle("active", state.lang === 'it');
-      document.getElementById("btnLangEn").classList.toggle("active", state.lang === 'en');
-
-      // Prima traduce, poi salva: anche se il salvataggio fallisse la lingua cambia comunque
+      state.lang = 'it';
       applyLocalization();
       saveState();
       renderLessonsGrid();
@@ -2065,8 +2072,8 @@
     }
 
     function applyLocalization() {
-      const t = I18N[state.lang];
-      document.documentElement.lang = state.lang;
+      const t = I18N.it;
+      document.documentElement.lang = "it";
       document.getElementById("btnSettingsClose").textContent = t.btnSettingsClose;
       document.getElementById("btnOpenSettings").title = t.settingsBtnTitle;
       document.getElementById("btnConfirmCancel").textContent = t.confirmCancel;
@@ -2095,7 +2102,6 @@
       document.getElementById("settingsTitle").textContent = t.settingsTitle;
       document.getElementById("settingsSubtitle").textContent = t.settingsSubtitle;
       document.getElementById("lblVolume").textContent = t.lblVolume;
-      document.getElementById("lblLanguage").textContent = t.lblLanguage;
 
       const speakBtn = document.getElementById("btnSpeakInstruction");
       if (speakBtn) speakBtn.title = t.btnSpeakTitle;
@@ -2453,8 +2459,6 @@
     function openSettingsModal() {
       document.getElementById("volumeSlider").value = state.volume;
       document.getElementById("volumeValueLabel").textContent = Math.round(state.volume * 100) + "%";
-      document.getElementById("btnLangIt").classList.toggle("active", state.lang === 'it');
-      document.getElementById("btnLangEn").classList.toggle("active", state.lang === 'en');
       document.getElementById("settingsModal").classList.add("active");
     }
 
